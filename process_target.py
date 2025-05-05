@@ -3,6 +3,7 @@ from google.genai import types
 import json
 from PIL import Image
 from io import BytesIO
+import pyttsx3
 
 client = genai.Client(api_key="AIzaSyBHMDmFuuc2CpK23wH_oPd0ZqogbnFlSWI") 
 
@@ -59,8 +60,6 @@ def generate_image(target):
         print(f"Unable to generate an image: {e}")
 
 
-        
-
 def process_target(target_fname):
 
     with open(target_fname, 'r') as f: 
@@ -75,7 +74,15 @@ def process_target(target_fname):
     img = generate_image(target)
 
     return definition, img
-    
+
+
+def speak(text):
+    engine = pyttsx3.init(driverName='nsss')
+    engine.setProperty('rate', 180)  # adjust speed (default is ~200)
+    engine.setProperty('voice', 'com.apple.eloquence.en-US.Samantha')
+    engine.say(text)
+    engine.runAndWait()
+
 
 if __name__ == "__main__":
 
@@ -93,3 +100,6 @@ if __name__ == "__main__":
     print(definition)
     # img = generate_image(target)
 
+    json_str = definition.strip().removeprefix("```json").removesuffix("```").strip()
+    definition_data = json.loads(json_str)
+    speak(definition_data["definition"])
