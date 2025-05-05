@@ -9,6 +9,9 @@ import mediapipe as mp
 from mediapipe import solutions
 from mediapipe.framework.formats import landmark_pb2
 
+from ocr_full import analyze_and_save
+from process_target import process_target
+
 # Constants
 MARGIN = 10
 FONT_SIZE = 1
@@ -69,6 +72,9 @@ options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path='models/hand_landmarker.task'),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=print_result,
+    min_hand_detection_confidence=0.05,
+    min_hand_presence_confidence=0.1, 
+    min_tracking_confidence=0.5
 )
 
 # Speech recognition thread
@@ -126,9 +132,9 @@ while True:
         landmarks_filename = f"saved_frames/triggered/landmarks.json"
 
         print(f"[Main] Saving current frame to {frame_filename}")
-        cv2.imwrite(frame_filename, display_frame)
+        cv2.imwrite(frame_filename, frame)
 
-        height, width, num_channels = display_frame.shape 
+        height, width, num_channels = frame.shape 
 
         if latest_result and latest_result.hand_landmarks:
             landmarks_data = []
@@ -146,6 +152,16 @@ while True:
                 json.dump(landmarks_data, f, indent=2)
 
             print(f"[Main] Saved landmarks to {landmarks_filename}")
+            print("Analyzing...")
+            analyze_and_save(
+                frame_path=frame_filename,
+                landmark_path=landmarks_filename,
+                save_dir="saved_frames/triggered/ocr"
+            )
+            print("OCR completed. Processing targets.")
+            definition, img = process_target("saved_frames/triggered/ocr/targets.json")
+
+
         else:
             print("[Main] No landmarks to save.")
 
