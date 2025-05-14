@@ -4,8 +4,13 @@ import json
 from PIL import Image
 from io import BytesIO
 import pyttsx3
+import os
 
-client = genai.Client(api_key="AIzaSyBHMDmFuuc2CpK23wH_oPd0ZqogbnFlSWI") 
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    raise RuntimeError("Please set the GEMINI_API_KEY environment variable with your Gemini API key.")
+
+client = genai.Client(api_key=api_key)
 
 def get_definition(target): 
 
