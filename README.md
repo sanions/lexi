@@ -137,13 +137,6 @@ python live_trigger.py
 - Say "Lex" (or the trigger word) to capture a frame and process the pointing gesture.
 - The system will save the frame, extract the pointed word, generate a definition and image, and (optionally) speak the definition.
 
-### 7. Optional Utilities
-
-- **Convert lock file to CSV:**  
-  ```sh
-  python uv_lock_to_csv.py uv.lock packages.csv
-  ```
-
 ---
 
 ## Notes & Troubleshooting
